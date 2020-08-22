@@ -19,8 +19,22 @@ namespace Dependency.Injection.Extensions.Decorator
         {
             services.AddSingleton<TextWriter>(Console.Out);
 
-            services.AddSingleton<SampleService>();
-            services.AddSingleton<ISampleService>(Decorate.WithInnerType<LoggingSampleService, SampleService>());
+            bool useOption1 = true;
+
+            if (useOption1)
+            {
+                services.AddSingleton<ISampleService>(
+                        Decorate<ISampleService>
+                            .This<SampleService>()
+                            .With<LoggingSampleService>()
+                            .Factory()
+                    );
+            }
+            else
+            {
+                services.AddSingleton<SampleService>();
+                services.AddSingleton<ISampleService>(Decorate.WithInnerType<LoggingSampleService, SampleService>());
+            }
         }
 
         static void Run(IServiceProvider serviceProvider)
