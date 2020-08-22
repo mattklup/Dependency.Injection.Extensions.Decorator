@@ -19,13 +19,14 @@ namespace Dependency.Injection.Extensions.Decorator
         {
             services.AddSingleton<TextWriter>(Console.Out);
 
-            bool useOption1 = true;
+            bool useOption1 = false;
 
             if (useOption1)
             {
                 services.AddSingleton<ISampleService>(
                         Decorate<ISampleService>
                             .This<SampleService>()
+                            .With<CachingSampleService>()
                             .With<LoggingSampleService>()
                             .Factory()
                     );
@@ -33,14 +34,21 @@ namespace Dependency.Injection.Extensions.Decorator
             else
             {
                 services.AddSingleton<SampleService>();
-                services.AddSingleton<ISampleService>(Decorate.WithInnerType<LoggingSampleService, SampleService>());
+                services.AddSingleton<CachingSampleService>(Decorate.WithInnerType<CachingSampleService, SampleService>());
+                services.AddSingleton<ISampleService>(Decorate.WithInnerType<LoggingSampleService, CachingSampleService>());
             }
         }
 
         static void Run(IServiceProvider serviceProvider)
         {
+            var log = serviceProvider.GetRequiredService<TextWriter>();
             var service = serviceProvider.GetRequiredService<ISampleService>();
 
+            log.WriteLine("First call");
+            service.Process(5);
+
+            log.WriteLine();
+            log.WriteLine("Second call");
             service.Process(5);
         }
     }
