@@ -18,13 +18,15 @@ namespace Dependency.Injection.Extensions.Decorator
         static void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.AddSingleton<TextWriter>(Console.Out);
+
+            services.AddSingleton<ISampleService, SampleService>();
         }
 
         static void Run(IServiceProvider serviceProvider)
         {
-            var log = serviceProvider.GetRequiredService<TextWriter>();
+            var service = serviceProvider.GetRequiredService<ISampleService>();
 
-            log.WriteLine("Hello World!");
+            service.Process(5);
         }
     }
 }
