@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dependency.Injection.Extensions.Decorator
 {
-    class Decorate<T>
+    public class Decorate<T>
     {
         private readonly List<Func<IServiceProvider, T>> factories = new List<Func<IServiceProvider, T>>();
 
